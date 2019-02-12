@@ -1,0 +1,48 @@
+{
+  "name": "chaos-model",
+  "version": "0.1.1",
+  "description": "chaos model, use to generate models",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run prepare; NODE_ENV=test mocha --require @babel/register",
+    "prepare": "npx babel src --out-dir lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minerva/minerva-ui-sdk.git"
+  },
+  "keywords": [
+    "mobius",
+    "model",
+    "sdk",
+    "sqorn",
+    "sql",
+    "chaos"
+  ],
+  "author": "Mobiusor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/minerva/minerva-ui-sdk/issues"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "@babel/polyfill": "^7.2.5",
+    "joi": "^14.3.1",
+    "pg": "^7.7.1",
+    "pg-then": "^1.2.1",
+    "restify-errors": "^6.1.1",
+    "@sqorn/pg": "0.0.45"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/register": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.2.0"
+  },
+  "homepage": "https://github.com/minerva/minerva-ui-sdk#readme"
+}

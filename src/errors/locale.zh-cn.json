@@ -1,0 +1,17 @@
+{
+  "DBCreateFailed": "创建数据失败",
+  "DBUpdateFailed": "更新数据失败",
+  "DBDeleteFailed": "删除数据失败",
+  "DBGetFailed": "获取数据失败",
+  "InvalidUserId": "登陆失败，账户名或密码错误",
+  "CheckVerifyCodeFailed": "校验验证码失败",
+  "InvalidVerifyCode": "验证码已失效，请重新获取",
+  "AddFailed": "创建失败",
+  "UpdateFailed": "更新失败",
+  "DeleteFaild": "删除失败",
+  "ValidateFailed": "数据校验失败",
+  "InvalidFilterSymbol": "非法的符号",
+  "InvalidNextKey": "非法键名",
+  "InvalidId": "id不存在",
+  "AccountOrPasswordInvalid": "用户名或密码不正确"
+}

@@ -1,15 +1,19 @@
 {
   "name": "chaos-model",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {
     "test": "npm run prepare; NODE_ENV=test mocha --require @babel/register",
-    "prepare": "npx babel src --out-dir lib"
+    "prepare": "npx babel src --out-dir lib",
+    "initdb": "npm run prepare; ./lib/cli.js initdb"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mobiusstudio/chaos-model.git"
+  },
+  "bin": {
+    "chaos": "lib/cli.js"
   },
   "keywords": [
     "mobius",
@@ -25,13 +29,14 @@
     "url": "https://github.com/mobiusstudio/chaos-model/issues"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
     "@babel/polyfill": "^7.2.5",
+    "@sqorn/pg": "0.0.45",
     "joi": "^14.3.1",
+    "lodash": "^4.17.11",
+    "log4js": "^4.0.2",
     "pg": "^7.7.1",
     "pg-then": "^1.2.1",
-    "restify-errors": "^6.1.1",
-    "@sqorn/pg": "0.0.45"
+    "restify-errors": "^6.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

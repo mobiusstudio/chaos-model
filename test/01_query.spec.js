@@ -41,7 +41,7 @@ class Answer extends DatabaseTable {
   }
 }
 
-describe('========== SELECT / JOIN / GROUP BY ==========', () => {
+describe('=============== Model ===============', () => {
   it('select all', () => {
     const question = new Question()
     const table = question.from().select()

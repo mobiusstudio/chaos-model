@@ -1,4 +1,5 @@
 import db from './database'
+import errors from './errors'
 
 global.db = db
 
@@ -8,4 +9,4 @@ export const configure = async (options) => {
 }
 
 export * from './model'
-export * from './errors'
+export { errors }

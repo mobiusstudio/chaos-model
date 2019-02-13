@@ -8,7 +8,21 @@ const normalize = (name) => {
   return name
 }
 
-// errors.localization = require('./locale.json')
+errors.localization = {
+  "DBCreateFailed": "Create object failed.",
+  "DBUpdateFailed": "Update object failed.",
+  "DBDeleteFailed": "Delete object failed.",
+  "DBGetFailed": "Get object information failed.",
+  "AddFailed": "Add new file failed.",
+  "UpdateFailed": "Update file failed.",
+  "DeleteFaild": "Delete new file failed.",
+  "ValidateFailed": "Validate failed.",
+  "InvalidFilterSymbol": "Invalid Filter Symbol",
+  "InvalidNextKey": "Invalid NextKey",
+  
+  "InvalidId": "This id does not exist in system.",
+  "AccountOrPasswordInvalid": "Invalid account or password."
+}
 
 errors.lang = (error) => {
   if (error.message) return error.message

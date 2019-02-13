@@ -1,9 +1,8 @@
 import db from './database'
 import errors from './errors'
 
-global.db = db
-
 export const configure = async (options) => {
+  global.db = db
   const res = await db.configure(options)
   return res
 }

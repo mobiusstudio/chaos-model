@@ -1,6 +1,6 @@
 {
   "name": "chaos-model",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {

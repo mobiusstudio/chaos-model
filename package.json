@@ -1,12 +1,11 @@
 {
   "name": "chaos-model",
-  "version": "0.2.7",
+  "version": "0.3.1",
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run prepare; npm run initdb; NODE_ENV=test mocha --require @babel/register",
-    "prepare": "npx babel src --out-dir lib",
-    "initdb": "ymir initdb test/database/config.json"
+    "test": "npm run prepare; ymir initdb test/database/config.json; NODE_ENV=test mocha --require @babel/register",
+    "prepare": "npx babel src --out-dir lib"
   },
   "repository": {
     "type": "git",

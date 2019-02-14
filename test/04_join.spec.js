@@ -128,7 +128,6 @@ describe('========== Join ==========', () => {
     const userOn = { userId: '"user".user.id' }
     const carOn = { carId: '"car".car.id' }
     const res = await profile.from().ljoin(user, userOn).ljoin(car, carOn).do()
-    console.log(res)
     // console.log(table.state.query)
   })
 })

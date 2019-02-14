@@ -3,6 +3,22 @@ import errors from './errors'
 
  export const connect = (connectionString) => {
   const pool = new pg.Pool({ connectionString })
+
+  pool.transaction = async (actions) => {
+    let client = null
+    try {
+      client = await pool.connect()
+      await client.query('BEGIN')
+      const result = await actions(client)
+      await client.query('COMMIT')
+      return result
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    } finally {
+      if (client) client.end()
+    }
+  }
   global.db = pool
 }
 

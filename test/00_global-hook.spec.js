@@ -7,8 +7,8 @@ chai.use(chaiAsPromised)
 chai.should()
 
 before(async () => {
-  const str = 'postgresql://mobiusor@localhost:5432/test'
-  await connect(str)
+  const str = require('./config/config.json')
+  await connect(str.connectionString)
 })
 
 after((done) => {

@@ -1,0 +1,24 @@
+{
+  "patchPath": "test/database/scripts",
+  "database": {
+    "postgres": {
+      "owlly": {
+        "db": "test",
+        "host": "localhost",
+        "port": 5432,
+        "credentials": {
+          "username": "mobiusor"
+        },
+        "default": true
+      },
+      "postgres": {
+        "db": "postgres",
+        "host": "localhost",
+        "port": 5432,
+        "credentials": {
+          "username": "mobiusor"
+        }
+      }
+    }
+  }
+}

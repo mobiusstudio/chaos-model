@@ -1,10 +1,9 @@
-import db from './database'
+import pg from 'pg'
 import errors from './errors'
 
-export const configure = async (options) => {
-  global.db = db
-  const res = await db.configure(options)
-  return res
+ export const connect = (connectionString) => {
+  const pool = new pg.Pool({ connectionString })
+  global.db = pool
 }
 
 export * from './model'

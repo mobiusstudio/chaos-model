@@ -1,19 +1,15 @@
 {
   "name": "chaos-model",
-  "version": "0.2.3",
+  "version": "0.2.7",
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {
     "test": "npm run prepare; NODE_ENV=test mocha --require @babel/register",
-    "prepare": "npx babel src --out-dir lib",
-    "initdb": "npm run prepare; ./lib/cli.js initdb"
+    "prepare": "npx babel src --out-dir lib"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mobiusstudio/chaos-model.git"
-  },
-  "bin": {
-    "chaos": "lib/cli.js"
   },
   "keywords": [
     "mobius",
@@ -31,11 +27,12 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "@sqorn/pg": "0.0.45",
+    "babel-loader": "^8.0.5",
     "joi": "^14.3.1",
     "lodash": "^4.17.11",
     "log4js": "^4.0.2",
-    "pg": "^7.7.1",
-    "pg-then": "^1.2.1",
+    "pg": "^7.8.0",
+    "pg-native": "^3.0.0",
     "restify-errors": "^6.1.1"
   },
   "devDependencies": {
@@ -44,10 +41,11 @@
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/preset-env": "^7.2.3",
     "@babel/register": "^7.0.0",
-    "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
   },
   "homepage": "https://github.com/mobiusstudio/chaos-model#readme"
 }

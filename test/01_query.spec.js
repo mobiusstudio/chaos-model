@@ -1,53 +1,6 @@
 /* eslint-disable quotes */
-import { DatabaseTable, ColumnArray } from '../lib'
-
-class Question extends DatabaseTable {
-  constructor() {
-    super({
-      schemaName: 'library',
-      tableName: 'question',
-      pkeyIndex: 0,
-      columns: [
-        {
-          name: 'id',
-          alias: 'questionId',
-          type: 'id',
-        },
-        {
-          name: 'content',
-          table: 'question',
-          type: 'string',
-        },
-        {
-          name: 'answerId',
-          foreign: ['library', 'answer'],
-          type: 'id',
-        },
-      ],
-    })
-  }
-}
-
-class Answer extends DatabaseTable {
-  constructor() {
-    super({
-      schemaName: 'library',
-      tableName: 'answer',
-      pkeyIndex: 0,
-      columns: [
-        {
-          name: 'id',
-          alias: 'answerId',
-          type: 'id',
-        },
-        {
-          name: 'description',
-          type: 'id',
-        },
-      ],
-    })
-  }
-}
+import { ColumnArray } from '../lib'
+import { Question, Answer } from './mock/models/qa'
 
 describe('========== SELECT / JOIN / GROUP BY ==========', () => {
   it('select all', () => {

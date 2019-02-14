@@ -1,7 +1,9 @@
 import pg from 'pg'
 import errors from './errors'
 
- export const connect = (connectionString) => {
+pg.defaults.parseInt8 = true
+
+export const connect = (connectionString) => {
   const pool = new pg.Pool({ connectionString })
 
   pool.transaction = async (actions) => {

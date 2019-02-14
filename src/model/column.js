@@ -1,16 +1,40 @@
 import { snakeCase } from 'lodash'
-import { BaseColumn } from './column-base'
-import { AggrColumn } from './column-aggr'
+import { ColumnBase } from '../libs/schema'
+import { ColumnAggr } from './column-aggr'
 
-export class Column extends BaseColumn {
-  constructor({ name, alias, foreign, table, type, def, required }) {
-    super({ name, alias, foreign, table, type, def, required })
+export class Column extends ColumnBase {
+  constructor({
+    schemaName,
+    tableName,
+    type,
+    name,
+    alias = null,
+    foreign = null,
+    required = false,
+    default: def = null,
+  }) {
+    super({
+      schemaName,
+      tableName,
+      type,
+      name,
+      alias,
+      foreign,
+      required,
+      default: def,
+    })
   }
 
-  sqlize = () => `${snakeCase(this.table)}.${snakeCase(this.name)}`
+  sqlize = () => `"${snakeCase(this.schemaName)}".${snakeCase(this.tableName)}.${snakeCase(this.name)}`
 
-  aggr = (aggrType, alias) => {
-    const res = new AggrColumn(aggrType, alias, this)
-    return res
+
+  sqlizeForeign = () => {
+    if (this.foreign === null) return null
+    if (typeof this.foreign === 'string') return `"${snakeCase(this.schemaName)}".${snakeCase(this.foreign)}`
+    if (this.foreign.length === 1) return `"${snakeCase(this.schemaName)}".${snakeCase(this.foreign[0])}`
+    if (this.foreign.length === 2) return `"${snakeCase(this.foreign[0])}".${snakeCase(this.foreign[1])}`
+    return null
   }
+
+  aggr = (aggrType, alias) => new ColumnAggr(aggrType, alias, this)
 }

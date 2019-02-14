@@ -1,6 +1,8 @@
-import Joi from 'joi'
+import joi from 'joi'
 import { snakeCase } from 'lodash'
-import { BaseColumn } from './column-base'
+import { typeMap as T } from '../libs/types'
+import { Column } from './column'
+import { ColumnAggr } from './column-aggr'
 import errors from '../errors'
 
 errors.register({
@@ -8,16 +10,32 @@ errors.register({
 })
 
 export class ColumnArray {
-  constructor(items, tableName = null) {
-    if (tableName && typeof tableName === 'string') {
-      this.items = items.map((item) => {
-        const obj = item
-        obj.table = tableName
-        return obj
+  constructor(items) {
+    this.items = items.map((item) => {
+      const {
+        schemaName,
+        tableName,
+        type,
+        name,
+        alias = null,
+        foreign = null,
+        required = false,
+        default: def = null,
+        aggrType = null,
+      } = item
+      const newColumn = new Column({
+        schemaName,
+        tableName,
+        type,
+        name,
+        alias,
+        foreign,
+        required,
+        default: def,
       })
-    } else {
-      this.items = items
-    }
+      if (aggrType && typeof aggrType === 'string') return new ColumnAggr(aggrType, alias, newColumn)
+      return newColumn
+    })
   }
 
   map = func => this.items.map(func)
@@ -26,14 +44,24 @@ export class ColumnArray {
     this.items.forEach(func)
   }
 
-  validate = (data) => {
+  validateAll = (data) => {
     const obj = {}
     this.items.forEach((item) => {
-      obj[item.name] = typeof item.type === 'string' ? BaseColumn.getRule(item.type) : item.type
+      const { type, name, required: req, default: def } = item
+      obj[name] = T.get(type).joi({ req, def })
     })
-    const schema = Joi.object(obj)
-    const result = Joi.validate(data, schema)
+    const schema = joi.object().keys(obj)
+    const result = joi.validate(data, schema)
     if (result.error) {
+      console.log(result.error)
+      throw new errors.ValidateFailedError(result.error.details[0].message)
+    }
+  }
+
+  validate = (type, value) => {
+    const result = joi.validate(value, T.get(type).joi({ req: true }))
+    if (result.error) {
+      console.log(result.error)
       throw new errors.ValidateFailedError(result.error.details[0].message)
     }
   }
@@ -42,11 +70,11 @@ export class ColumnArray {
     const res = {}
     this.items.forEach((item) => {
       const alias = item.alias ? item.alias : item.name
-      if (res[`"${snakeCase(alias)}"`]) {
+      if (res[`${snakeCase(alias)}`]) {
         // eslint-disable-next-line no-console
         console.warn('duplicate column', item.alias, item.name)
       }
-      res[`"${snakeCase(alias)}"`] = item.sqlize()
+      res[`${snakeCase(alias)}`] = item.sqlize() // BUG: sqorn auto snakecase has problem with "
     })
     return res
   }
@@ -55,7 +83,7 @@ export class ColumnArray {
     const newItems = this.items.filter((column) => {
       let flag = false
       names.forEach((name) => {
-        if (name === column.name || name === `${column.table}.${column.name}`) {
+        if (name === column.name || name === `${column.tableName}.${column.name}`) {
           flag = true
         }
       })
@@ -68,7 +96,7 @@ export class ColumnArray {
     const newItems = this.items.filter((column) => {
       let flag = true
       names.forEach((name) => {
-        if (name === column.name || name === `${column.table}.${column.name}`) {
+        if (name === column.name || name === `${column.tableName}.${column.name}`) {
           flag = false
         }
       })
@@ -82,5 +110,5 @@ export class ColumnArray {
     return new ColumnArray(newItems)
   }
 
-  first = name => this.items.find(column => name === column.name || name === `${column.table}.${column.name}`)
+  first = name => this.items.find(column => name === column.name || name === `${column.tableName}.${column.name}`)
 }

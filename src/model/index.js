@@ -3,4 +3,3 @@ export * from './column-array'
 export * from './table'
 export * from './database-table'
 export * from './sq'
-

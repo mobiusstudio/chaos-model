@@ -19,46 +19,27 @@ export class Table {
     return new Table(state, this.columns)
   }
 
-  join = (dt) => {
+  ljoin = (dt, on = null) => { // TODO: fix join
+    const { schemaName, tableName } = dt
+    const dtName = `"${snakeCase(schemaName)}".${snakeCase(tableName)}`
     const ons = {}
-    this.columns.forEach((column) => {
-      if (column.foreign === dt.tableName) {
-        ons[column.sqlize()] = sq.raw(dt.sqlizePkey())
-      }
-    })
-    const state = this.state.join(`"${snakeCase(dt.schemaName)}".${snakeCase(dt.tableName)}`)
-      .on(ons)
+    if (on) {
+      Object.keys(on).forEach((key) => {
+        ons[snakeCase(key)] = sq.raw(on[key])
+      })
+    } else {
+      this.columns.forEach((column) => {
+        if (column.sqlizeForeign() === dtName) {
+          ons[column.name] = sq.raw(dt.sqlizePkey())
+        }
+      })
+    }
+    const state = this.state.leftJoin(dtName).on(ons)
     const columns = this.columns.concat(dt.columns)
     return new Table(state, columns)
   }
 
-  leftJoin = (dt) => {
-    const ons = {}
-    this.columns.forEach((column) => {
-      if (column.foreign === dt.tableName) {
-        ons[column.sqlize()] = sq.raw(dt.sqlizePkey())
-      }
-    })
-    const state = this.state.leftJoin(`"${snakeCase(dt.schemaName)}".${snakeCase(dt.tableName)}`)
-      .on(ons)
-    const columns = this.columns.concat(dt.columns)
-    return new Table(state, columns)
-  }
-
-  rightJoin = (dt) => {
-    const ons = {}
-    this.columns.forEach((column) => {
-      if (column.foreign === dt.tableName) {
-        ons[column.sqlize()] = sq.raw(dt.sqlizePkey())
-      }
-    })
-    const state = this.state.rightJoin(`"${snakeCase(dt.schemaName)}".${snakeCase(dt.tableName)}`)
-      .on(ons)
-    const columns = this.columns.concat(dt.columns)
-    return new Table(state, columns)
-  }
-
-  groupBy = (columns, aggrColumns) => {
+  groupBy = (columns, aggrColumns) => { // TODO: fix group by
     const newColumns = columns.concat(aggrColumns)
     const state = this.state.groupBy(columns.map(column => column.sqlize()))
       .return(newColumns.objlize())

@@ -1,5 +1,5 @@
-import { snakeCase, mapKeys } from 'lodash'
-import { camelCaseObject } from '../utils'
+import { snakeCase, camelCase, mapKeys } from 'lodash'
+import { TableBase } from '../libs/schema'
 import { Table } from './table'
 import { ColumnArray } from './column-array'
 import { sq } from './sq'
@@ -11,30 +11,47 @@ errors.register({
   DeleteFailed: 400,
 })
 
-export class DatabaseTable {
-  constructor(schemaName, tableName) {
+export class DatabaseTable extends TableBase {
+  constructor({
+    schemaName,
+    tableName,
+    pkeyIndex = 0,
+    columns = [],
+  }) {
+    super({
+      schemaName,
+      tableName,
+      pkeyIndex,
+      columns,
+    })
     this.schemaName = schemaName
     this.tableName = tableName
-    this.columns = new ColumnArray([])
-    this.pkey = 'id'
+    this.pkeyName = columns[pkeyIndex].name || '#pkeyName#'
+    this.pkeyType = columns[pkeyIndex].type
+    this.columns = new ColumnArray(columns.map(column => ({
+      schemaName,
+      tableName,
+      ...column,
+    })))
   }
 
   getState = () => sq.from(`"${snakeCase(this.schemaName)}".${snakeCase(this.tableName)}`)
 
-  sqlizePkey = () => `${snakeCase(this.tableName)}.${snakeCase(this.pkey)}`
+  sqlizePkey = () => `"${snakeCase(this.schemaName)}".${snakeCase(this.tableName)}.${snakeCase(this.pkeyName)}`
 
   from = () => new Table(this.getState(), this.columns)
 
-  add = async (data, client = db) => {
+  add = async ({ data, pkeyValue = null }, client = db) => {
     try {
-      this.columns.validate(data)
-      const newData = mapKeys(data, (value, key) => snakeCase(key))
-      delete newData[this.pkey]
+      const tempData = data
+      this.columns.validateAll(tempData)
+      if (!pkeyValue) delete tempData[this.pkeyName]
+      else tempData[this.pkeyName] = pkeyValue
+      const newData = mapKeys(tempData, (value, key) => snakeCase(key))
       const sql = this.getState().insert(newData).return('*').query
       const res = await client.query(sql.text, sql.args)
       if (res.rowCount === 0) throw new errors.AddFailedError()
-      console.log(res.rows[0])
-      return(camelCaseObject(res.rows[0]))
+      return mapKeys(res.rows[0], (value, key) => camelCase(key))
     } catch (error) {
       throw error
     }
@@ -60,14 +77,14 @@ export class DatabaseTable {
   update = async ({ data, pkeyValue }, client = db) => {
     try {
       const tempData = data
-      tempData[`${this.pkey}`] = pkeyValue
-      this.columns.validate(tempData)
+      tempData[`${this.pkeyName}`] = pkeyValue
+      this.columns.validateAll(tempData)
       const newData = mapKeys(data, (value, key) => snakeCase(key))
-      delete newData[this.pkey]
-      const sql = this.getState().where`${sq.raw(`${this.pkey}`)} = ${pkeyValue}`.set(newData).return('*').query
+      delete newData[snakeCase(this.pkeyName)]
+      const sql = this.getState().where`${sq.raw(`${snakeCase(this.pkeyName)}`)} = ${pkeyValue}`.set(newData).return('*').query
       const res = await client.query(sql.text, sql.args)
       if (res.rowCount === 0) throw new errors.UpdateFailedError(`${pkeyValue}`)
-      return camelCaseObject(res.rows[0])
+      return mapKeys(res.rows[0], (value, key) => camelCase(key))
     } catch (error) {
       throw error
     }
@@ -92,11 +109,8 @@ export class DatabaseTable {
 
   delete = async (pkeyValue, client = db) => {
     try {
-      const data = {
-        [`${this.pkey}`]: pkeyValue,
-      }
-      this.columns.validate(data)
-      const sql = this.getState().where`${sq.raw(`${this.pkey}`)} = ${pkeyValue}`.delete.query
+      this.columns.validate(this.pkeyType, pkeyValue)
+      const sql = this.getState().where`${sq.raw(`${snakeCase(this.pkeyName)}`)} = ${pkeyValue}`.delete.query
       const res = await client.query(sql.text, sql.args)
       if (res.rowCount === 0) throw new errors.DeleteFailedError(`${pkeyValue}`)
       return pkeyValue

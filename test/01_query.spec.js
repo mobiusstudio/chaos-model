@@ -7,7 +7,7 @@ describe('========== SELECT / JOIN / GROUP BY ==========', () => {
     const question = new Question()
     const table = question.from().select()
     const { query } = table.state
-    query.text.should.equal('select "library".question.id question_id, "library".question.content content, "library".question.answer_id answer_id from "library".question')
+    query.text.should.equal('select "library".question.id _question_id_, "library".question.content _content_, "library".question.answer_id _answer_id_ from "library".question')
     query.args.length.should.equal(0)
   })
 
@@ -16,7 +16,7 @@ describe('========== SELECT / JOIN / GROUP BY ==========', () => {
     const key = '资料'
     const table = question.from().where({ content: key }).select()
     const { query } = table.state
-    query.text.should.equal('select "library".question.id question_id, "library".question.content content, "library".question.answer_id answer_id from "library".question where (content = $1)')
+    query.text.should.equal('select "library".question.id _question_id_, "library".question.content _content_, "library".question.answer_id _answer_id_ from "library".question where (content = $1)')
     query.args[0].should.equal('资料')
   })
 
@@ -25,7 +25,7 @@ describe('========== SELECT / JOIN / GROUP BY ==========', () => {
     const key = '%资料%'
     const table = question.from().where`content LIKE ${key}`.select()
     const { query } = table.state
-    query.text.should.equal('select "library".question.id question_id, "library".question.content content, "library".question.answer_id answer_id from "library".question where (content LIKE $1)')
+    query.text.should.equal('select "library".question.id _question_id_, "library".question.content _content_, "library".question.answer_id _answer_id_ from "library".question where (content LIKE $1)')
     query.args[0].should.equal('%资料%')
   })
 
@@ -36,7 +36,7 @@ describe('========== SELECT / JOIN / GROUP BY ==========', () => {
     const table = question.from().where`content LIKE ${key}`.ljoin(answer)
     const selected = table.columns.filter(['question.id', 'content', 'answer.id', 'description'])
     const { query } = table.select(selected).state
-    query.text.should.equal('select "library".question.id question_id, "library".question.content content, "library".answer.id answer_id, "library".answer.description description from "library".question left join "library".answer on (answer_id = "library".answer.id) where (content LIKE $1)')
+    query.text.should.equal('select "library".question.id _question_id_, "library".question.content _content_, "library".answer.id _answer_id_, "library".answer.description _description_ from "library".question left join "library".answer on (answer_id = "library".answer.id) where (content LIKE $1)')
     query.args[0].should.equal('%资料%')
   })
 
@@ -50,7 +50,7 @@ describe('========== SELECT / JOIN / GROUP BY ==========', () => {
       table.columns.first('content').aggr('array', 'aggr_content'),
     ])
     const { query } = table.groupBy(table.columns.filter(['answerId']), aggrs).state
-    query.text.should.equal('select "library".question.answer_id answer_id, array_agg("library".question.id) aggr_id, array_agg("library".question.content) aggr_content from "library".question left join "library".answer on (answer_id = "library".answer.id) where (content LIKE $1) group by ("library".question.answer_id)')
+    query.text.should.equal('select "library".question.answer_id _answer_id_, array_agg("library".question.id) _aggr_id_, array_agg("library".question.content) _aggr_content_ from "library".question left join "library".answer on (answer_id = "library".answer.id) where (content LIKE $1) group by ("library".question.answer_id)')
     query.args[0].should.equal('%资料%')
   })
 

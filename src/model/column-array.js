@@ -74,7 +74,7 @@ export class ColumnArray {
         // eslint-disable-next-line no-console
         console.warn('duplicate column', item.alias, item.name)
       }
-      res[`${snakeCase(alias)}`] = item.sqlize() // BUG: sqorn auto snakecase has problem with "
+      res[`"${snakeCase(alias)}"`] = item.sqlize() // BUG: sqorn auto snakecase has problem with "
     })
     return res
   }

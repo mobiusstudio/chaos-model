@@ -4,7 +4,8 @@
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run prepare; ymir initdb test/database/config.json; NODE_ENV=test mocha --require @babel/register",
+    "initdb": "ymir initdb ./test/database/config.json",
+    "test": "npm run prepare; npm run initdb; NODE_ENV=test mocha --require @babel/register",
     "prepare": "npx babel src --out-dir lib"
   },
   "repository": {

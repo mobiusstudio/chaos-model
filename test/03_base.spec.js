@@ -12,7 +12,7 @@ describe('========== Base ==========', () => {
 
   it('add', async () => {
     try {
-      const res = await task.add({
+      const res = await task.push({
         data: taskDataAdd,
       })
       checkObject(res, taskDataAdd, task)
@@ -29,7 +29,7 @@ describe('========== Base ==========', () => {
         { data: taskDataAdd },
         { data: taskDataAdd },
       ]
-      const res = await task.batchAdd(dataArray)
+      const res = await task.batchPush(dataArray)
       res.forEach(data => (checkObject(data, taskDataAdd, task)))
       taskIds = res.map(data => data.id)
     } catch (error) {
@@ -39,7 +39,7 @@ describe('========== Base ==========', () => {
 
   it('update', async () => {
     try {
-      const res = await task.update({
+      const res = await task.push({
         data: taskDataUpdate,
         pkeyValue: taskId,
       })
@@ -57,7 +57,7 @@ describe('========== Base ==========', () => {
         { data: taskDataUpdate, pkeyValue: taskIds[1] },
         { data: taskDataUpdate, pkeyValue: taskIds[2] },
       ]
-      const res = await task.batchUpdate(paramsArray)
+      const res = await task.batchPush(paramsArray)
       res.forEach((data, index) => {
         checkObject(data, taskDataUpdate, task)
         data.id.should.equal(taskIds[index])

@@ -41,6 +41,45 @@ export class DatabaseTable extends TableBase {
 
   from = () => new Table(this.getState(), this.columns)
 
+  isExit = async (pkeyValue, client) => {
+    try {
+      if (!pkeyValue) return false
+      this.columns.validate(this.pkeyType, pkeyValue)
+      const sql = this.getState().where`${sq.raw(`${snakeCase(this.pkeyName)}`)} = ${pkeyValue}`.query
+      const res = await client.query(sql.text, sql.args)
+      return res.rowCount > 0
+    } catch (error) {
+      throw error
+    }
+  }
+
+  push = async ({ data, pkeyValue = null }, client = db) => {
+    try {
+      const isExit = await this.isExit(pkeyValue, client)
+      if (!pkeyValue || !isExit) return await this.add({ data, pkeyValue }, client)
+      else return await this.update({ data, pkeyValue }, client)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  batchPush = async (dataArray) => {
+    try {
+      const res = db.transaction(async (client) => {
+        const promiseArray = []
+        dataArray.forEach((data) => {
+          const item = this.push(data, client)
+          promiseArray.push(item)
+        })
+        const resultArray = await Promise.all(promiseArray)
+        return resultArray
+      })
+      return res
+    } catch (error) {
+      throw error
+    }
+  }
+
   add = async ({ data, pkeyValue = null }, client = db) => {
     try {
       const tempData = data
@@ -57,22 +96,22 @@ export class DatabaseTable extends TableBase {
     }
   }
 
-  batchAdd = async (dataArray) => {
-    try {
-      const res = db.transaction(async (client) => {
-        const promiseArray = []
-        dataArray.forEach((data) => {
-          const item = this.add(data, client)
-          promiseArray.push(item)
-        })
-        const resultArray = await Promise.all(promiseArray)
-        return resultArray
-      })
-      return res
-    } catch (error) {
-      throw error
-    }
-  }
+  // batchAdd = async (dataArray) => {
+  //   try {
+  //     const res = db.transaction(async (client) => {
+  //       const promiseArray = []
+  //       dataArray.forEach((data) => {
+  //         const item = this.add(data, client)
+  //         promiseArray.push(item)
+  //       })
+  //       const resultArray = await Promise.all(promiseArray)
+  //       return resultArray
+  //     })
+  //     return res
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 
   update = async ({ data, pkeyValue }, client = db) => {
     try {
@@ -90,22 +129,22 @@ export class DatabaseTable extends TableBase {
     }
   }
 
-  batchUpdate = async (paramsArray) => {
-    try {
-      const res = db.transaction(async (client) => {
-        const promiseArray = []
-        paramsArray.forEach((params) => {
-          const item = this.update(params, client)
-          promiseArray.push(item)
-        })
-        const resultArray = await Promise.all(promiseArray)
-        return resultArray
-      })
-      return res
-    } catch (error) {
-      throw error
-    }
-  }
+  // batchUpdate = async (paramsArray) => {
+  //   try {
+  //     const res = db.transaction(async (client) => {
+  //       const promiseArray = []
+  //       paramsArray.forEach((params) => {
+  //         const item = this.update(params, client)
+  //         promiseArray.push(item)
+  //       })
+  //       const resultArray = await Promise.all(promiseArray)
+  //       return resultArray
+  //     })
+  //     return res
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 
   delete = async (pkeyValue, client = db) => {
     try {

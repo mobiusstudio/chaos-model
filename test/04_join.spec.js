@@ -30,7 +30,7 @@ describe('========== Join ==========', () => {
   it('add account', async () => {
     const user = new User()
     try {
-      const res = await user.add({
+      const res = await user.push({
         data: mobiusor,
       })
       checkObject(res, mobiusor, user)
@@ -41,7 +41,7 @@ describe('========== Join ==========', () => {
     }
 
     try {
-      const res = await user.add({
+      const res = await user.push({
         data: elaine,
       })
       checkObject(res, elaine, user)
@@ -55,7 +55,7 @@ describe('========== Join ==========', () => {
     const profile = new UserProfile()
     try {
       mProfile.loverId = elaine.id
-      const pres = await profile.add({
+      const pres = await profile.push({
         data: mProfile,
         pkeyValue: mobiusor.id,
       })
@@ -66,7 +66,7 @@ describe('========== Join ==========', () => {
 
     try {
       eProfile.loverId = mobiusor.id
-      const pres = await profile.add({
+      const pres = await profile.push({
         data: eProfile,
         pkeyValue: elaine.id,
       })
@@ -79,7 +79,7 @@ describe('========== Join ==========', () => {
   it('add car', async () => {
     const car = new Car()
     try {
-      const res = await car.add({
+      const res = await car.push({
         data: xts,
       })
       checkObject(res, xts, car)
@@ -95,7 +95,7 @@ describe('========== Join ==========', () => {
       carId: xts.id,
     }
     try {
-      const res = await profile.update({
+      const res = await profile.push({
         data: newMp,
         pkeyValue: mobiusor.id,
       })
@@ -111,7 +111,7 @@ describe('========== Join ==========', () => {
       carId: xts.id,
     }
     try {
-      const res = await profile.update({
+      const res = await profile.push({
         data: newEp,
         pkeyValue: elaine.id,
       })
@@ -128,6 +128,6 @@ describe('========== Join ==========', () => {
     const userOn = { userId: '"user".user.id' }
     const carOn = { carId: '"car".car.id' }
     const res = await profile.from().ljoin(user, userOn).ljoin(car, carOn).do()
-    // console.log(table.state.query)
+    console.log(res)
   })
 })

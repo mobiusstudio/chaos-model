@@ -41,6 +41,38 @@ export class DatabaseTable extends TableBase {
 
   from = () => new Table(this.getState(), this.columns)
 
+  get = async (pkeyValue, client = db) => {
+    try {
+      this.columns.validate(this.pkeyType, pkeyValue)
+      const sql = this.getState().where`${sq.raw(`${snakeCase(this.pkeyName)}`)} = ${pkeyValue}`.query
+      const res = await client.query(sql.text, sql.args)
+      if (res.rowCount > 0) {
+        const newRes = mapKeys(res.rows[0], (value, key) => camelCase(key))
+        return newRes
+      }
+      return {}
+    } catch (error) {
+      throw error
+    }
+  }
+
+  batchGet = async (pkeyArray) => {
+    try {
+      const res = db.transaction(async (client) => {
+        const promiseArray = []
+        pkeyArray.forEach((pkeyValue) => {
+          const item = this.get(pkeyValue, client)
+          promiseArray.push(item)
+        })
+        const resultArray = await Promise.all(promiseArray)
+        return resultArray
+      })
+      return res
+    } catch (error) {
+      throw error
+    }
+  }
+
   isExit = async (pkeyValue, client) => {
     try {
       if (!pkeyValue) return false

@@ -69,8 +69,23 @@ describe('========== Base ==========', () => {
 
   it('get', async () => {
     try {
-      const res = await task.from().where`id = ${taskId}`.select(task.columns).do()
-      checkObject(res[0], taskDataUpdate, task)
+      const res = await task.get(taskId)
+      checkObject(res, taskDataUpdate, task)
+    } catch (error) {
+      throw error
+    }
+  })
+
+  it('batch get', async () => {
+    try {
+      const res = await task.batchGet([
+        taskIds[0],
+        taskIds[1],
+        taskIds[2],
+      ])
+      res.forEach((item) => {
+        checkObject(item, taskDataUpdate, task)
+      })
     } catch (error) {
       throw error
     }

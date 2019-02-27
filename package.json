@@ -1,6 +1,6 @@
 {
   "name": "chaos-model",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "chaos model, use to generate models",
   "main": "lib/index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "@babel/polyfill": "^7.2.5",
     "@sqorn/pg": "0.0.45",
     "babel-loader": "^8.0.5",
-    "chaos-library": "0.0.3",
+    "chaos-library": "0.0.4",
     "joi": "^14.3.1",
     "lodash": "^4.17.11",
     "log4js": "^4.0.2",
